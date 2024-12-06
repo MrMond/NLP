@@ -2,9 +2,9 @@
 
 ## TODOS
 
-[ ] Pipeline Designen
-[ ] Modelle finden
-[ ] Bewertungsmetriken festlegen
+- [ ] Pipeline Designen
+- [ ] Modelle finden
+- [ ] Bewertungsmetriken festlegen
  
 ## Initiale Idee
 
