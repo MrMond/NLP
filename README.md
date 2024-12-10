@@ -2,9 +2,27 @@
 
 ## TODOS
 
+- Huggingface zum Modell verwenden
+
+- Darstellung
+    - Backend: Flask
+    - Frontend: Streamlit
+    - Macht **Stamm**
 - [ ] Pipeline Designen
+    - Pipeline basteln **BigM**
+    - Webscraping **BigM**
 - [ ] Modelle finden
-- [ ] Bewertungsmetriken festlegen
+    - LLAMA (ist gut) **Stamm**
+    - Mistral / Mixtral (ist schlecht) **Luis**
+    - **Bunge** hat nen Vogel (Bird)
+    - [Liste an ideen](https://www.datacamp.com/blog/top-open-source-llms)
+    - [Liste an ideen](https://github.com/eugeneyan/open-llms)
+- [ ] Bewertungsmetriken festlegen 
+    - TODO **JB**
+- [ ] Doku
+    - **JB**
+
+Next meeting next Wednesday vor dem dings 11:30h
  
 ## Initiale Idee
 
@@ -30,4 +48,3 @@ Statistische Analysen und ML-Modelle für Performance-Vorhersagen.
 ### Ergebnis:
 
 Eine benutzerfreundliche Plattform, die fundierte, automatisierte Empfehlungen für Fantasy-Ligen bereitstellt, um Nutzern einen strategischen Vorteil zu verschaffen.
-
