@@ -1,27 +1,36 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-# Lade Tokenizer und Modell
-model_name = "mistralai/Mistral-7B-v0.1"  # Offizieller Modellname auf Hugging Face
+# Dein Hugging Face Auth-Token
+HF_AUTH_TOKEN = "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"
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
+# Modellname von Hugging Face
+model_name = "mistralai/Mistral-7B-v0.1"
 
-# Eingabeaufforderung (Prompt)
-prompt = "Erkläre mir bitte die Hauptideen der Quantenmechanik."
+# Tokenizer laden (mit Auth-Token)
+print("Lade Tokenizer...")
+tokenizer = AutoTokenizer.from_pretrained(model_name, token=HF_AUTH_TOKEN)
 
-# Tokenisierung der Eingabe
-inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
-
-# Generiere Text mit dem Modell
-output = model.generate(
-    inputs["input_ids"],
-    max_length=200,  # Maximale Länge des generierten Textes
-    num_return_sequences=1,  # Anzahl der Sequenzen
-    temperature=0.7,  # Steuerung der Kreativität
-    top_p=0.9,  # Top-p-Sampling
-    do_sample=True  # Zufällige Auswahl aktivieren
+# Modell laden (auf CPU beschränkt, mit Auth-Token)
+print("Lade Modell (das kann auf der CPU etwas dauern)...")
+model = AutoModelForCausalLM.from_pretrained(
+    model_name, 
+    device_map="cpu", 
+    token=HF_AUTH_TOKEN,
+    torch_dtype=torch.float16
 )
 
-# Dekodiere und drucke das Ergebnis
-result = tokenizer.decode(output[0], skip_special_tokens=True)
+# Eingabetext
+input_text = "Was ist der Sinn des Lebens?"
+
+# Eingabe tokenisieren
+inputs = tokenizer(input_text, return_tensors="pt")
+
+# Modell generieren lassen
+print("Generiere Text...")
+outputs = model.generate(**inputs, max_new_tokens=50, do_sample=True)
+
+# Ausgabe dekodieren
+result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print("Generierter Text:")
 print(result)
