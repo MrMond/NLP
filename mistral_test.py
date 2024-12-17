@@ -15,13 +15,13 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, token=HF_AUTH_TOKEN)
 print("Lade Modell (das kann auf der CPU etwas dauern)...")
 model = AutoModelForCausalLM.from_pretrained(
     model_name, 
-    device_map="cpu", 
+    device_map="auto", 
     token=HF_AUTH_TOKEN,
     torch_dtype=torch.float16
 )
 
 # Eingabetext
-input_text = "Was ist der Sinn des Lebens?"
+input_text = "Was weißt du über Basketball"
 
 # Eingabe tokenisieren
 inputs = tokenizer(input_text, return_tensors="pt")
