@@ -1,7 +1,5 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from typing import List, Dict
-import torch
-
+import ollama
 
 class Chat:
     def __init__(self, model_name: str):
@@ -13,20 +11,12 @@ class Chat:
         self.model_name = model_name
 
         try:
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16,
-                device_map="cpu"
-            )
-            self.generator = pipeline(
-                "text-generation",
-                model=self.model,
-                tokenizer=self.tokenizer,
-                max_new_tokens=512
-            )
+            self.model = ollama.Model(self.model_name)#
+            self.model.run()
+            
+            
         except Exception as e:
-            raise RuntimeError(f"Failed to load model or tokenizer: {e}")
+            raise RuntimeError(f"Failed to run model: {e}")
 
     def add_message(self, role: str, content: str) -> None:
         """

@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
-from utility.Chat import Chat
+
+from ollama import ChatResponse
+from ollama import chat
+
 
 system_message = ""
 context_message = ""
@@ -10,24 +13,26 @@ app = Flask(__name__)
 @app.route('/generate_recommendations', methods=['POST'])
 def generate_recommendations():
 
-    chat = Chat()
-    chat.add_message('system', system_message)
-    chat.add_message('system', context_message)
-
+    messages = []
+    messages.append({'role': 'system', 'content': system_message})
+    messages.append({'role': 'system', 'content': context_message})
+    
     body = request.get_json()
-    user_message = body["message"]
     conversation_history = body.get('conversation_history', [])
-
+    
     for message in conversation_history:
-        chat.add_message(message['role'], message['content'])
+        messages.append({'role': message['role'],'content': message['content']})
+    
+    response: ChatResponse = chat(model='llama3.2', messages=messages)
 
-    chat.add_message('user', user_message)
-    chat.generate_response()
+    messages.append({'role': 'assistant', 'content': response['message']['content']})
 
-    chat.conversation_history = chat.conversation_history[2:]
+    messages = messages[2:]
+    
+    print(messages)
 
     return jsonify({
-        'conversation_history': chat.conversation_history
+        'conversation_history': messages,
     })
 
 
