@@ -54,7 +54,7 @@ with st.container():
 
     with col1:
         user_input = st.text_input(
-            "", 
+            "User Prompt:", 
             placeholder="Type your message here:",
             label_visibility="collapsed",
             key="input_field",
