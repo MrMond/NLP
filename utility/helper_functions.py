@@ -1,4 +1,4 @@
-from variables import player_exceptions
+from utility.variables import player_exceptions
 from fuzzywuzzy import process
 
 # Function to handle possessive forms in player names

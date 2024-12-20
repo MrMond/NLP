@@ -1,7 +1,7 @@
 import spacy
 from spacy.matcher import Matcher
-from variables import team_variations
-from helper_functions import remove_possessive, matcher, fuzzy_matcher
+from utility.variables import team_variations
+from utility.helper_functions import remove_possessive, matcher, fuzzy_matcher
 
 
 class EntityExtractor:
@@ -71,21 +71,3 @@ class EntityExtractor:
         entities["team_names"] = list(set(entities["team_names"]))
         return entities
 
-
-# Testing Area
-# Initialize the extractor
-extractor = EntityExtractor()
-
-# Test Input
-text_1 = "How would you judge lebron james performance?"
-text_2 = "How would you judge anthony edwards performance?"
-text_3 = "What players from the Indian are peforming well??"
-
-# Extract Entities
-result_1 = extractor.extract_entities(text_1)
-result_2 = extractor.extract_entities(text_2)
-result_3 = extractor.extract_entities(text_3)
-
-print("Result 1:", result_1)
-print("Result 2:", result_2)
-print("Result 3:", result_3)
