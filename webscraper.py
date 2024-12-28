@@ -1,66 +1,67 @@
 import mechanicalsoup as ms # creates a 'headless browser'
+import os
+import requests
+from dotenv import load_dotenv #pip install python-dotenv
 
 class webscraper:
     browser = ms.Browser()
-    def __init__(self, url:str, max_search_depth = 2):
-        self._initial_url = url
-        self.max_search_depth = max_search_depth
-        self.web_content = {} # this is the result of the web-crawl
-        
-    def __str__(self)->str:
-        return f"started search (depth: {self.max_search_depth}) with '{self._initial_url}'"
+    def __init__(self,**kwargs):
+        self.google_key = kwargs.get("key")
+        self.google_engine_id = kwargs.get("search_engine_id")
+
+        if not self.google_key:
+            load_dotenv()
+            self.google_key = os.getenv("GOOGLE_KEY")
+
+        if not self.google_engine_id:
+            load_dotenv()
+            self.google_engine_id = os.getenv("GOOGLE_ID")
     
     def retrieve_content(self):
-        '''searches all pages and subpages within the max_search_depth'''
-        
-        # reset previous crawl here??
-        
-        urls = {0:[self._initial_url]}
-        for i in range(self.max_search_depth):
-            if len(urls[i]) == 0: # active search depth has no valid links; return result
-                return self.web_content
-            
-            urls[i+1] = [] # initialize next layer of links
-            
-            for url in urls[i]: # analyze pages
-                page = self.browser.get(url)
-                if page.status_code != 200: # only go ahead with successfull requests
-                    print(f"skipped {url} (Code: {page.status_code})")
+        with open("player_list.txt") as of:
+            player_names = [p.strip() for p in of.readlines()]
+
+        for player in player_names:
+            # get links to articles
+            links = self.__google_search(f"Recent performance of {player} in the NBA")
+            # evaluate links
+            links = [link for link in links if self.__evaluate_link(link)]
+
+            for url in links:
+
+                page = self.browser.get(url) # retrieve content
+
+                if page.status_code != 200: # assert working connection
                     continue
-                
-                self.__push_web_content(i,self.__find_content_on_page(page)) # append content to result
-                urls[i+1].append(self.__find_next_pages(page)) # append valid links to next layer
+
+                content = self.__find_content_on_page(page)
+                self.__push_content(content) # add content to db
+
+    def __google_search(self,query:str)->list[str]:
+        '''Returns a list of links to results from the last 24hrs'''
+
+        params = dict(q = query, key = self.google_key, cx = self.google_engine_id,    # required params
+                    dateRestrict = "d1") # additional parameters
         
-        return self.web_content
+        response = requests.get("https://www.googleapis.com/customsearch/v1",params=params,verify=False)
+
+        if response.status_code != 200:
+            print(f"{response.status_code} {response.reason}")
+            raise EnvironmentError("Make sure that the google credentials in your environment are correct and that you have quotas left for your query.")
+        
+        result = response.json().get("items",[])
+        return [item["link"] for item in result]
 
     def __find_content_on_page(self,page):
         '''specify return format with rest of project'''
         raise NotImplementedError("This will return the content on the page as a str or similar")
-    
-    def __find_next_pages(self,page):
-        valid_links = []
-        
-        for link in page.soup.select("a"): # iterate through all links found in the html of the page
-            try:
-                if self.__evaluate_link(link["href"]): # only append useful links
-                    if "www." in link["href"]: # seperate subpages from external links
-                        valid_links.append(link["href"])
-                    else:
-                        valid_links.append(page.url+link)
-            except KeyError: # no href in link element
-                continue
             
     def __evaluate_link(self,link:str):
-        raise NotImplementedError("This function will evaluate if a link to a subpage is related to our search goal; This is to reduce the amount of pages needing to be searched")
+        return True # this may need to be implemented depending on result quality
     
-    def __push_web_content(self,key,content)->None:
-        '''push content to the self.web_content dictionary and assure that each entry is a list; handle appending and creating new keys'''
-        try:
-            self.web_content[key].append(content)
-        except KeyError:
-            self.web_content[key] = [content]
-    
+    def __push_content(content:list[str]):
+        raise NotImplementedError("Need a vector DB here")
+
 if __name__ == "__main__":
-    ws = webscraper("google.com")
-    print(ws)
+    ws = webscraper()
     ws.retrieve_content()
