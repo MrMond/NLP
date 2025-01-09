@@ -14,3 +14,7 @@ create a folder /etc and put a .env file with the following information in it:
 |GOOGLE_KEY|credentials generated vie the google console|
 |GOOGLE_ID|id of an automatic search engine|
 |HUGGINGFACE_LOGIN|huggingface login credentials|
+
+## how to use
+
+There is a function called ```recieve_vectorstore``` in [Webscraper](webscraper.py). Call this function to get the correct Vectorstore (a new one, if there hasn't been done any webscraping today, the stored one otherwise)

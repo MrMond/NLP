@@ -3,7 +3,7 @@ exports 2 classes: VectorMetadata and VectorDB'''
 
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings 
-from langchain.text_splitter import RecursiveCharacterTextSplitter #TODO in VectoMetadata
+from langchain.text_splitter import RecursiveCharacterTextSplitter #TODO in VectoMetadata if vector db has to big entries
 from huggingface_hub import login as huggingface_login
 import os
 from datetime import datetime
@@ -92,10 +92,13 @@ class VectorDB:
 
         with open(os.path.join(self.location,"timestamp.txt"),"w") as write_file:
             write_file.write(datetime.now().strftime("%d/%m/%Y"))
+        
+        return self
 
     def load_persistent(self):
         """load the saved db"""
         self.db = FAISS.load_local(self.location, embeddings=self.embedding_model, allow_dangerous_deserialization=True)
+        return self
 
     def simmilarity_search(self,query:str):
         """perform a simmilarity search on the db"""

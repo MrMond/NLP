@@ -1,10 +1,25 @@
 import mechanicalsoup as ms # creates a 'headless browser'
-from vector_db import VectorMetadata
+from vector_db import VectorMetadata, VectorDB
 import os
 import requests
+from datetime import date, datetime
 from dotenv import load_dotenv #pip install python-dotenv
 
 load_dotenv(os.path.join(os.getcwd(),"etc",".env")) # load .env file into memory
+
+def recieve_vectorstore()->VectorDB:
+    '''function to handle webscraping:\n
+    this will perform webscraping if it hasn't been done today, else it will create a vectorstore from a file'''
+    try:
+        # assert, that the timestamp file exists and the timestamp has been created today --> else we need to create a new db
+        assert os.path.isfile(os.path.join(os.getcwd(),"vector_storage","timestamp.txt"))
+        assert date.today()==datetime.strptime(of.readline(),"%d/%m/%Y").date()
+        with open(os.path.join(os.getcwd(),"vector_storage","timestamp.txt"),"r") as of:
+            db = VectorDB().load_persistent()
+    except AssertionError:
+        content = Webscraper().retrieve_content()
+        db = VectorDB().create(content)
+    return db
 
 class Webscraper:
     browser = ms.Browser()
