@@ -16,7 +16,7 @@ def remove_possessive(player_list):
         list: Updated list of player names with possessive forms handled.
     """
     for player in player_list:
-        modified_player = player
+        modified_player = player.title()
         # Handle names ending with "'s" (e.g., "Jordan's")
         if player.endswith("'s"):
             modified_player = player[:-2]  # Remove possessive 's
@@ -84,13 +84,25 @@ def fuzzy_matcher(self, doc, entities):
     """
     # List of team names for matching
     team_list = list(self.reverse_team_lookup.keys())
-    for token in doc:
+
+    # Iterate through tokens and multi-token spans
+    for span in doc:
+        # Skip stop-words and non-proper nouns
+        if span.is_stop or span.pos_ not in {"PROPN", "NOUN"}:
+            continue
+
         # Perform fuzzy matching for the token text
-        fuzzy_match, score = process.extractOne(token.text, team_list)
+        fuzzy_match, score = process.extractOne(span.text, team_list)
+
         # Check if the match score meets the threshold
+        # Adjust threshold for single-token matches
+        if len(span.text.split()) == 1 and score < self.fuzzy_threshold + 10:
+            continue
+
         if score >= self.fuzzy_threshold:
             # Map the fuzzy-matched name using reverse lookup or fallback to the matched name
             team_key = self.reverse_team_lookup.get(fuzzy_match, fuzzy_match)
+
             # Add the team name to the entities if not already present
             if team_key not in entities["team_names"]:
                 entities["team_names"].append(team_key)

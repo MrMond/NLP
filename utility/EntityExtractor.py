@@ -48,7 +48,7 @@ class EntityExtractor:
         Returns:
             dict: Dictionary containing extracted player and team names.
         """
-        doc = self.nlp(text.title())
+        doc = self.nlp(text)
         entities = {"player_names": [], "team_names": []}
 
         # Named Entity Recognition for players
@@ -58,15 +58,16 @@ class EntityExtractor:
 
         # Custom rules for removing possessives from player names
         entities["player_names"] = remove_possessive(entities["player_names"])
+        print(f"step: 1 {entities}")
 
         # Custom matcher for team names (including variations)
         matches = self.matcher(doc)
         entities = matcher(self, matches, doc, entities)
-
+        print(f"step: 2 {entities}")
         # Fuzzy matching for team names if no exact matches found
         if not entities["team_names"]:
             entities = fuzzy_matcher(self, doc, entities)
-
+            print(f"step: 3 {entities}")
         # Deduplicate team names
         entities["team_names"] = list(set(entities["team_names"]))
         return entities

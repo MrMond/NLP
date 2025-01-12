@@ -75,7 +75,7 @@ def get_team_info(team_name):
 
 def fetch_context(input_dict):
     """
-    Fetches relevant context for LLM from the provided player and team names.
+    Fetches relevant statistics for LLM from the provided player and team names.
 
     Parameters:
         input_dict (dict): Dictionary containing 'player_names' and 'team_names'.

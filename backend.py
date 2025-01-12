@@ -5,16 +5,17 @@ from ollama import chat
 from utility.EntityExtractor import EntityExtractor
 from utility.variables import system_message
 from utility.nba_data import fetch_context
+from utility.web_scraper import receive_vector_store
 
 app = Flask(__name__)
 
+vector_db = receive_vector_store()
 
 @app.route('/generate_recommendations', methods=['POST'])
 def generate_recommendations():
 
     messages = []
     messages.append({'role': 'system', 'content': system_message})
-    messages.append({'role': 'system', 'content': "Introduce yourself"})
     
     body = request.get_json()
     conversation_history = body.get('conversation_history', [])
@@ -24,17 +25,30 @@ def generate_recommendations():
     # get the last message content
     last_message = conversation_history[-1]['content']
     
+    # extract entities from the last message
     extractor = EntityExtractor()
     entities = extractor.extract_entities(last_message)
     
-    context = fetch_context(entities)
-    context = str(context)
-    messages.append({'role': 'system', 'content': context})
+    # fetch context from the API
+    api_context = fetch_context(entities)
+    api_context = str(api_context)
+    messages.append({'role': 'system', 'content': api_context})
+    
+    # fetch context from the vector database
+    db_context = vector_db.similarity_search(last_message)
+    # Extract and format document content
+    formatted_context = "\n\n".join(
+        f"Source: {doc.metadata.get('source', 'Unknown')}\nContent: {doc.page_content}"
+        for doc in db_context
+    )
+    
+    messages.append({'role': 'system', 'content': formatted_context})
+    
+    print(messages)
     
     for message in conversation_history:
         messages.append({'role': message['role'],'content': message['content']})
     
-    print(f"Messages: {messages}")
     try:
         response: ChatResponse = chat(model='llama3.2', messages=messages)
         print(response)

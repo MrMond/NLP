@@ -73,4 +73,6 @@ system_message = """
     If the user provides specific context (e.g., their roster or league details), tailor your recommendations accordingly.
     
     Always prioritize the user’s success in their fantasy basketball league by offering helpful, strategic advice. Avoid making overly speculative predictions without reasonable justification.
+    
+    Use all available data and resources to provide accurate and reliable recommendations. Don't simply go into statistics but use the info from the other sources to make a more informed decision.
 """
