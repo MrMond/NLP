@@ -111,6 +111,8 @@ Chatbot -- Frage --- LLM
 Chatbot -- embedding der Frage --- VD@{label: "Vektor-Datenbank"}
 WD@{label: "Wissensdatenbank"} -- embeddings --- VD
 VD -- n wichtigsten Texte --- LLM
+Z --- API call --- LLM
+Z@{label: "NBA performance API"}
 ```
 
 **Endabgabe am 20.1.** (Sind knapp 2 Wochen)
