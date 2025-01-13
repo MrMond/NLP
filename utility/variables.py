@@ -1,3 +1,13 @@
+from nba_api.stats.static import players
+
+def get_players():
+    player_dict = players.get_players()
+    player_names = [player['full_name'] for player in player_dict]
+    return player_names
+
+player_names = get_players() 
+
+
 team_variations = {
     "Atlanta Hawks": ["Hawks", "Atlanta"],
     "Boston Celtics": ["Celtics", "Boston"],

@@ -1,13 +1,50 @@
 from nba_api.stats.static import players, teams
 from nba_api.stats.endpoints import commonplayerinfo, playergamelog, teamdetails, commonteamroster
+from unidecode import unidecode
 import json
+
+def normalize_name(name):
+    """
+    Normalize names by removing special characters.
+    """
+    return unidecode(name.lower())
+
+def find_player_by_name(player_name):
+    """
+    Find player ID by name, normalizing names to handle special characters.
+    """
+    player_dict = players.get_players()
+    normalized_input = normalize_name(player_name)
+
+    # Search for the player
+    matching_players = [
+        player for player in player_dict 
+        if normalize_name(player['full_name']) == normalized_input
+    ]
+
+    return matching_players[0] if matching_players else None
+
+def find_team_by_name(team_name):
+    """
+    Find team ID by name, normalizing names to handle special characters.
+    """
+    team_dict = teams.get_teams()
+    normalized_input = normalize_name(team_name)
+
+    # Search for the team
+    matching_teams = [
+        team for team in team_dict 
+        if normalize_name(team['full_name']) == normalized_input
+    ]
+
+    return matching_teams[0] if matching_teams else None
 
 def get_recent_performance(player_id):
     """
     Retrieve recent game performance for a player.
     """
     game_logs = playergamelog.PlayerGameLog(player_id=player_id, season_type_all_star="Regular Season").get_normalized_dict()
-    recent_games = game_logs['PlayerGameLog'] if 'PlayerGameLog' in game_logs else []
+    recent_games = game_logs.get('PlayerGameLog', [])
 
     return [
         {
@@ -24,42 +61,42 @@ def get_player_info(player_name):
     """
     Retrieve detailed player information and recent game performance using nba_api.
     """
-    # Resolve player ID from name
-    player_dict = players.find_players_by_full_name(player_name)
-    if not player_dict:
+    # Find player by name
+    player = find_player_by_name(player_name)
+    if not player:
         return {'Error': f"Player '{player_name}' not found."}
-    
-    player_id = player_dict[0]['id']
-    
+
+    player_id = player['id']
+
     # Fetch player info
     player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id).get_normalized_dict()
-    
+
     # Fetch recent game logs
     recent_performance = get_recent_performance(player_id=player_id)
 
     return {
-        'Name': player_name,
+        'Name': player['full_name'],
         'RecentGames': recent_performance,
-        'SeasonStats': player_info['PlayerHeadlineStats'][0] if player_info['PlayerHeadlineStats'] else "No stats available",
+        'SeasonStats': player_info['PlayerHeadlineStats'][0] if player_info.get('PlayerHeadlineStats') else "No stats available",
     }
 
 def get_team_info(team_name):
     """
     Retrieve detailed team information and its players' recent performances using nba_api.
     """
-    # Resolve team ID from full name
-    team_dict = teams.find_teams_by_full_name(team_name)
-    if not team_dict:
+    # Find team by name
+    team = find_team_by_name(team_name)
+    if not team:
         return {'Error': f"Team '{team_name}' not found."}
-    
-    team_id = team_dict[0]['id']
+
+    team_id = team['id']
 
     # Fetch team details
     team_info = teamdetails.TeamDetails(team_id=team_id).get_normalized_dict()
 
     # Fetch team roster
     roster_info = commonteamroster.CommonTeamRoster(team_id=team_id).get_normalized_dict()
-    players_on_team = roster_info['CommonTeamRoster'] if 'CommonTeamRoster' in roster_info else []
+    players_on_team = roster_info.get('CommonTeamRoster', [])
 
     # Fetch recent performance for all players
     team_players = {
@@ -68,10 +105,9 @@ def get_team_info(team_name):
     }
 
     return {
-        'Team Name': team_dict[0]['full_name'],
+        'Team Name': team['full_name'],
         'Players': team_players
     }
-
 
 def fetch_context(input_dict):
     """
@@ -100,4 +136,3 @@ def fetch_context(input_dict):
         context['Teams'][team_name] = team_info
 
     return context
-

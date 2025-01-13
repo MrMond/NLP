@@ -1,6 +1,7 @@
 from utility.variables import player_exceptions
 from fuzzywuzzy import process
 
+
 # Function to handle possessive forms in player names
 
 
@@ -59,7 +60,7 @@ def matcher(self, matches, doc, entities):
         # Extract the matched text span
         team_name = doc[start:end].text
         # Map the matched team name using reverse lookup or fallback to the original name
-        team_key = self.reverse_team_lookup.get(team_name, team_name)
+        team_key = self.reverse_team_lookup.get(team_name.title(), team_name)
         # Add the team name to the entities if not already present
         if team_key not in entities["team_names"]:
             entities["team_names"].append(team_key)
@@ -106,5 +107,41 @@ def fuzzy_matcher(self, doc, entities):
             # Add the team name to the entities if not already present
             if team_key not in entities["team_names"]:
                 entities["team_names"].append(team_key)
+
+    return entities
+
+def fuzzy_matcher_for_players(self, entities, player_list):
+    """
+    Performs fuzzy matching to identify and correct player names in the entities dictionary.
+
+    Args:
+        entities (dict): Dictionary containing extracted entity information, including `player_names`.
+        player_list (list): List of valid player names for matching.
+        fuzzy_threshold (int): Threshold for fuzzy matching (default is 90).
+
+    Returns:
+        dict: Updated entities dictionary with corrected player names.
+    """
+    # Ensure "player_names" exists in the entities dictionary
+    if "player_names" not in entities:
+        entities["player_names"] = []
+
+    corrected_player_names = []
+
+    # Iterate through player names in the entities
+    for name in entities["player_names"]:
+        # Perform fuzzy matching to find the closest player name
+        fuzzy_match, score = process.extractOne(name, player_list)
+
+        # Check if the match score meets the threshold
+        if score >= self.fuzzy_threshold:
+            # Use the fuzzy-matched name as the corrected name
+            corrected_player_names.append(fuzzy_match)
+        else:
+            # If no good match is found, keep the original name
+            corrected_player_names.append(name)
+
+    # Update the "player_names" key in the entities dictionary
+    entities["player_names"] = corrected_player_names
 
     return entities

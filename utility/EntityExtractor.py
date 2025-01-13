@@ -1,7 +1,7 @@
 import spacy
 from spacy.matcher import Matcher
-from utility.variables import team_variations
-from utility.helper_functions import remove_possessive, matcher, fuzzy_matcher
+from utility.variables import team_variations, player_names
+from utility.helper_functions import remove_possessive, matcher, fuzzy_matcher, fuzzy_matcher_for_players
 
 
 class EntityExtractor:
@@ -58,16 +58,22 @@ class EntityExtractor:
 
         # Custom rules for removing possessives from player names
         entities["player_names"] = remove_possessive(entities["player_names"])
-        print(f"step: 1 {entities}")
+        
+        
+        # Identify names not present in the player list
+        invalid_names = [name for name in entities["player_names"] if name not in player_names]
 
+        # If there are invalid names, call the fuzzy matcher to update them
+        if invalid_names:
+            print(f"Found invalid names: {invalid_names}. Running fuzzy matcher...")
+            entities = fuzzy_matcher_for_players(self, entities, player_names)
+        
         # Custom matcher for team names (including variations)
         matches = self.matcher(doc)
         entities = matcher(self, matches, doc, entities)
-        print(f"step: 2 {entities}")
         # Fuzzy matching for team names if no exact matches found
         if not entities["team_names"]:
             entities = fuzzy_matcher(self, doc, entities)
-            print(f"step: 3 {entities}")
         # Deduplicate team names
         entities["team_names"] = list(set(entities["team_names"]))
         return entities

@@ -41,15 +41,15 @@ class WebScraper:
 
         data = VectorMetaData() # data structure for db creation
 
-        with open("utility/player_list.txt") as of:
-            player_names = [p.strip() for p in of.readlines()]
+        with open("utility/entity_list.txt") as of:
+            entity_names = [p.strip() for p in of.readlines()]
 
-        for player in player_names:
+        for entity in entity_names:
 
-            print(player)
+            print(entity)
 
             # get links to articles
-            links = self.__google_search(f"Recent performance of {player} in the NBA")
+            links = self.__google_search(f"Recent performance of {entity} in the NBA")
             # evaluate links
             links = [link for link in links if self.__evaluate_link(link)]
 
@@ -62,7 +62,7 @@ class WebScraper:
                 except AssertionError as e:
                     continue
 
-                data[player] = content
+                data[entity] = content
 
         return data
 
@@ -70,7 +70,7 @@ class WebScraper:
         '''Returns a list of links to results from the last 24hrs'''
 
         params = dict(q = query, key = self.google_key, cx = self.google_engine_id,    # required params
-                    dateRestrict = "d1") # additional parameters
+                    dateRestrict = "d1", lr = "lang_en") # additional parameters
         
         response = requests.get("https://www.googleapis.com/customsearch/v1",params=params)
 

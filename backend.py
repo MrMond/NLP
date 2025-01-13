@@ -42,16 +42,18 @@ def generate_recommendations():
         for doc in db_context
     )
     
-    messages.append({'role': 'system', 'content': formatted_context})
+    print(entities)
+    print("\n")
+    print(formatted_context)
+    print("\n")
     
-    print(messages)
+    messages.append({'role': 'system', 'content': formatted_context})
     
     for message in conversation_history:
         messages.append({'role': message['role'],'content': message['content']})
     
     try:
         response: ChatResponse = chat(model='llama3.2', messages=messages)
-        print(response)
     except Exception as e:
         print(f"Error: {e}")
 
