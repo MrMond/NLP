@@ -138,6 +138,11 @@ Next meet 1. Woche
 |doku schreiben|Stamm & Moddy|
 |Präsi|zusammen|
 
+
+## referanzantworten
+
+- Fragen: für jeden Spieler / Team: "Would you recommd x for my fantasy league", "What was the recent performance of x", "How has x been performing recently"... (Spielerliste ist im branch "current_implementation"; 3-5 fragen pro spieler / team)
+- Antworten: macht Luis manuell
 # Probleme bei der bewertung
 
 - cut-off-date: gehr wegen der APIs nicht
