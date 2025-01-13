@@ -3,7 +3,7 @@ exports 2 classes: VectorMetadata and VectorDB'''
 
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings 
-from langchain.text_splitter import RecursiveCharacterTextSplitter #TODO in VectoMetadata if vector db has to big entries
+from langchain.text_splitter import RecursiveCharacterTextSplitter 
 from huggingface_hub import login as huggingface_login
 import os
 from datetime import datetime
@@ -14,6 +14,9 @@ load_dotenv(os.path.join(os.getcwd(),"etc",".env")) # load .env file into memory
 class VectorMetadata:
     """Assert correct structure for VectorDB creation\n
     Can be used just like a normal dictionary, but content retrieval always returns a list and each key may be assigned to multiple values"""
+    
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=50)
+
     def __init__(self):
         self.content = {}
     
@@ -26,16 +29,14 @@ class VectorMetadata:
     # override default dict methods, in order to use default dict interface in code
 
     def __setitem__(self,key,value):
-        if key in self.content.keys():
-            if type(value)==type([]):
-                self.content[key] += value
-            else:
-                self.content[key].append(value)
+        if key not in self.content.keys(): # make sure each key is a list
+            self.content[key] = []
+
+        if type(value)==type([]): # append to key
+            for text in value:
+                self.content[key] += self.splitter.split_text(text)
         else:
-            if type(value)==type([]):
-                self.content[key] = value
-            else:
-                self.content[key] = [value]
+            self.content[key] += self.splitter.split_text(value)
 
     def __getitem__(self,key):
         return self.content[key]
