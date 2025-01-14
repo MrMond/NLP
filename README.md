@@ -34,7 +34,7 @@ Ein Chatbot, der über Spieler und Teams der NBA gefragt werden kann, um empfehl
 
 # Code
 
-Main Entry-Point: [app.py](app.py)
+Main Entry-Point [app.py](app.py): ```streamlit run app.py```
 
 Interaktion mit der App über den localhost.
 
