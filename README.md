@@ -40,37 +40,24 @@ Interaktion mit der App über den localhost.
 
 ## Struktur
 
+```
 project
-
 ├── etc
-
 │   └── .env
-
 ├── vector_storage
-
 │   ├── timestamp.txt
-
 │   └── vectorstrore.pkl
-
 ├── utility
-
 │   ├── EntityExtractor.py
-
 │   ├── entity_list.txt
-
 │   ├── helper_functions.py
-
 │   ├── nba_data.py
-
 │   ├── variables.py
-
 │   ├── vector_db.py
-
 │   └── web_scraper.py
-
 ├── app.py
-
 └── backend.py
+```
 
 ### vector_storage
 
