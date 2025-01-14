@@ -40,6 +40,7 @@ Interaktion mit der App über den localhost.
 
 ## Struktur
 
+```
 project
 ├── etc
 │   └── .env
@@ -56,6 +57,7 @@ project
 │   └── web_scraper.py
 ├── app.py
 └── backend.py
+```
 
 ### vector_storage
 
