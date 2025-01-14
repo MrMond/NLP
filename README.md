@@ -1,151 +1,162 @@
-# NBA Fantasy League Recommender
+# Team
 
-## TODOS
+__Kurs__: WWI22DSA
 
-- Huggingface zum Modell verwenden
+|Name|Matrikelnummer|
+|-|-|
+|Joel Bück|4860895|
+|Luis Litters|4512765|
+|Lukas Runge|7590014|
+|Lukas Stamm|8402366|
+|Martin Schauer|7961802|
 
-- Darstellung
-    - Backend: Flask
-    - Frontend: Streamlit
-    - Macht **Stamm**
-- [ ] Pipeline Designen
-    - Pipeline basteln **BigM**
-    - Webscraping **BigM**
-- [ ] Modelle finden
-    - LLAMA (ist gut) **Stamm**
-    - Mistral / Mixtral (ist schlecht) **Luis**
-    - **Bunge** hat nen Vogel (Bird)
-    - [Liste an ideen](https://www.datacamp.com/blog/top-open-source-llms)
-    - [Liste an ideen](https://github.com/eugeneyan/open-llms)
-- [ ] Bewertungsmetriken festlegen 
-    - TODO **JB**
-- [ ] Doku
-    - **JB**
+# Projekt
 
-Next meeting next Wednesday vor dem dings 11:30h
- 
-## Initiale Idee
+## Ziel
 
-### Ziel:
+Entwicklung einer Plattform, die [NBA-Fantasy](https://de.nbafantasy.nba.com/)-Spielern datenbasierte Empfehlungen liefert, basierend auf aktueller Spieler-Performance und relevanten Berichten, mithilfe von Webscraping und LLMs.
 
-Entwicklung einer Plattform, die NBA-Fantasy-Spielern datenbasierte Empfehlungen liefert, basierend auf aktueller Spieler-Performance und relevanten Berichten, mithilfe von Webscraping und LLMs.
+## Probleme
 
-### Probleme:
+Informationsüberflutung durch zahlreiche News und Statistiken. Schwierige Analyse dynamischer Spielerleistungen. Unsicherheiten durch Verletzungen, Trade-Gerüchte und Formänderungen. Lösung:
 
-Informationsüberflutung durch zahlreiche News und Statistiken.
-Schwierige Analyse dynamischer Spielerleistungen.
-Unsicherheiten durch Verletzungen, Trade-Gerüchte und Formänderungen.
-Lösung:
+__Datenaggregation__: Webscraping von Spielerstatistiken und relevanten News. 
 
-**Datenaggregation**: Webscraping von Spielerstatistiken und relevanten News.
-NLP mit LLMs: Analyse und Bewertung von Berichten (z. B. Verletzungen, Trends).
-**Empfehlungssystem**: Datenbasierte Vorschläge für Spieleraufstellungen, Trades und Investitionen.
-**Methoden**:
+__NLP mit LLMs__: Analyse und Bewertung von Berichten (z. B. Verletzungen, Trends).
 
-Webscraping & APIs.
-Statistische Analysen und ML-Modelle für Performance-Vorhersagen.
+__Empfehlungssystem__: Datenbasierte Vorschläge für Spieleraufstellungen, Trades und Investitionen für Fantasy League. 
 
-### Ergebnis:
+__Methoden__: Mithilfe von Webscraping werden Informationen zur Performance der Spieler gesucht, die sich aus den Daten, die eine NBA-API zur verfügung stellt, nicht abbilden.
 
-Eine benutzerfreundliche Plattform, die fundierte, automatisierte Empfehlungen für Fantasy-Ligen bereitstellt, um Nutzern einen strategischen Vorteil zu verschaffen.
+## Ergebnis
 
-# Meeting 1
+Ein Chatbot, der über Spieler und Teams der NBA gefragt werden kann, um empfehlungen für Fantasy League zu geben. Dazu werden aktuelle Artikel und die Spielerstatistiken, die die NBA bereitstellt, als Entscheidungsgrundlage zuhilfe gezogen.
 
-_Modelle_
+# Code
 
-- Problem: LLama ist viel zu langsam
-- BERD kann nur Lücken füllen
-- Gema ist gut (Output länge 120 Tokens)
+Main Entry-Point: [app.py](app.py)
 
-_Webscraping:
+Interaktion mit der App über den localhost.
 
-- Artikel werden zu lang sein
-- Vektor-Embeddings @Luis hat evtl schon code-snippits
-    - Ziel: sentiment analysis
-    - Welche information: wie bewerten Artikel performance von spielern fürs nächste Spiel
-    
+## Struktur
 
-_Neue Idee Webscraping_
+project
+├── etc
+│   └── .env
+├── vector_storage
+│   ├── timestamp.txt
+│   └── vectorstrore.pkl
+├── utility
+│   ├── EntityExtractor.py
+│   ├── entity_list.txt
+│   ├── helper_functions.py
+│   ├── nba_data.py
+│   ├── variables.py
+│   ├── vector_db.py
+│   └── web_scraper.py
+├── app.py
+└── backend.py
 
-Am Anfang Webscraping zu Spielerperformance in kommenden spielen (Artikel dazu) in ne Wissensdatenbank füllen
+### vector_storage
 
-Metriken:
-- Informationsextraktion named-entity-recognition, aug-roc-kurve, klassicshe metriken (F1, accuracy)
-- Sentiment analysis: (modell bewertung vs tatsächliches outcome)
-- scoring der zusammenfassungen (GLU-score)
+Der Ordner vector_sorage wird beim Ausführen des Codes automatisch erstellt. Hier wird die Vektordatenbank persistent gespeichert, um nur 1 mal am Tag webscrapen zu müssen (Tokens sparen).
 
-_Applikation_
-- Front und Backend sind schon in groben zügen fertig
-- Matcher finded Teams und Personen
+### /etc
 
-## PLAN
+Der Ordner etc muss selbst erstellt werden. Dort muss ein File ".env" abgelet werden, der folgende VAriablen definiert:
 
-3 Teams:
+|Variable|Wert|
+|-|-|
+|GOOGLE_KEY|Account-key für die Google programmable search engine REST-API|
+|GOOGLE_ID|[ID der Search Engine](https://programmablesearchengine.google.com/controlpanel/all)|
+|HUGGINGFACE_LOGIN|Login-Token für Huggingface|
 
-1) V1 fertig stellen:  (Lukasse)
-    - Modelle aus Colab ins Git ziehen
-2) Webscraping (Martin und Luis)
-    - fertig machen
-    - V2 vorbereiten
-3) Evaluierung (Joel)
-    - Bekommen der Daten?
+> [!NOTE]
+> Die kostenlose API von Google unterstützt nur 100 Suchen pro Tag!
 
-V1 und V2
+## User Interface
 
-### V1:
+![Screenshot der UI](/documentation_img/ui_screenshot.png)
 
-- Einfache architektur: aktuell funktionierende Systeme zusammenziehen
-- Webscraping-Kontext als Text direkt in die Anfrage
-- Webscraping bei jeder anfrage
-- Nur 5 Artikel webscraping
+Das UI ist schlicht und ähnelt dem, der ChatGPT-Onlineanwendung. 
 
-### V2:
+Die App wird mit Streamlit und Flask umgesetzt. Streamlit erstellt die UI und Flask handled das Backend.
 
-- Embeddings als Kontext fürs LLM
-- 1 mal am Tag Wissensdatenbank aufbauen
+## VektorDB
 
 ```mermaid
 flowchart TD
-User -- Frage --- Chatbot
-Chatbot -- Frage --- LLM
-Chatbot -- embedding der Frage --- VD@{label: "Vektor-Datenbank"}
-WD@{label: "Wissensdatenbank"} -- embeddings --- VD
-VD -- n wichtigsten Texte --- LLM
-Z@{label: "NBA performance API"} -- API call --- LLM
+A@{shape: manual-input, label: "User"}
+B@{label: "Chatbot-UI"}
+C@{label: "Webscraping"}
+D@{shape: cyl, label: "Vektor-Datenbank"}
+E@{label: "NBA-API"}
+F@{label: "LLM"}
+G@{label: "Liste mit Spielern & Teams", shape: doc}
+
+A -- Frage --- B
+B -- embedding der Frage --- D
+B -- Frage --- F
+subgraph 1 mal täglich
+    G -.-> C
+    C -- embeddings --- D
+end
+D -- n relevantesten Texte --- F
+B -- entity extraction (API-Call) --- E
+E -- Statistiken --- F
 ```
 
-**Endabgabe am 20.1.** (Sind knapp 2 Wochen)
+### [Webscraper](utility/web_scraper.py)
 
-Next meet 1. Woche 
+Enthält eine Funktion ```recieve_vector_store()```, die das Webscrapen und die Vektordatenbank managed:
 
+- Es wird überprüft, ob eine aktuelle Datenbank vorliegt (gespeichert ist)
+- Wenn ja, wird diese als ```VectorDB```-Objekt zurückgegeben
+- Wenn nein, wird ein Webscraping durchgeführt, eine neue ```VectorDB``` erstellt, gespeichert und zurückgegeben.
 
-# done
+Ablauf des Webscrapings:
 
-- OLLama handled llms
+```mermaid
+flowchart LR
+A@{label: "Google API"}
+B@{label: "headless Browser"}
+C@{label: "VectorMetadata-Objekt"}
+D@{shape: cyl, label: "VektorDB-Objekt"}
+E@{label: "Alle Artikel", shape: brace-r}
 
-- code geht
-    - entities
-    - context
+subgraph Für jeden Spieler/Team
+A -- 10 Links zu Artikeln --- B
+B -- Content-Extraction --- C
+end
+C~~~E
+E -.-> D
+```
 
-# todos
+### [Vektordatenbank](utility/vector_db.py)
 
-|what|who|
-|-|-|
-|3 modelle testen|Bunge + Jöl|
-|scores berechnen https://medium.com/data-science-at-microsoft/evaluating-llm-systems-metrics-challenges-and-best-practices-664ac25be7e5|Jöl + supporting cast|
-|referenzantworten?|Luis|
-|bericht schreiben|Luis+Bunge+Jöl|
-|doku schreiben|Stamm & Moddy|
-|Präsi|zusammen|
+Das ```VectorDB```-Objekt hat eine Methode ```similarity_search(query:str)```, die eine Liste der top n ähnlichen Texte zurück gibt.
 
+Es wurde eine Klasse ```VectorMetadata``` implementiert, die das Interface eines Dictionaries nutzt und das Format der Daten für das Erstellen der Datenbank sicherstellt.
 
-## referanzantworten
+## [LLM](backend.py)
 
-- Fragen: für jeden Spieler / Team: "Would you recommd x for my fantasy league", "What was the recent performance of x", "How has x been performing recently"... (Spielerliste ist im branch "current_implementation"; 3-5 fragen pro spieler / team)
-- Antworten: macht Luis manuell
-# Probleme bei der bewertung
+Die Einbindung des LLMs geschieht mithilfe von Ollama
 
-- cut-off-date: gehr wegen der APIs nicht
-- bewertung daher an einem exemplarischen tag
+Ablauf des Generierens von Recommendations:
 
-$\rarr$ datenbank über funktion (recieve_vectorstore()) in webscraper.py laden und dann simmilarity search machen und artikel lesen $\rarr$ referenzantworten erstellen
+```mermaid
+flowchart LR
+A@{shape: manual-input, label: "User"}
+B@{label: "Entitiy-Extractor"}
+C@{label: "API"}
+D@{shape: cyl, label: "Datenbank"}
+E@{label: "LLM"}
+F@{label: "UI"}
+
+A -- Frage --- F
+F -- Konversationsverlauf --- B
+B -- Spieler/Team --- C & D
+C & D -- Kontext --- E
+E -- Empfehlung --- F
+F -- Empfehlung --- A
+```
