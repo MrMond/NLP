@@ -139,6 +139,9 @@ Next meet 1. Woche
 |Präsi|zusammen|
 
 
+## Guide to LLM Evaluation
+https://medium.com/data-science-at-microsoft/evaluating-llm-systems-metrics-challenges-and-best-practices-664ac25be7e5
+
 ## referanzantworten
 
 - Fragen: für jeden Spieler / Team: "Would you recommd x for my fantasy league", "What was the recent performance of x", "How has x been performing recently"... (Spielerliste ist im branch "current_implementation"; 3-5 fragen pro spieler / team)
