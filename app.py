@@ -13,6 +13,7 @@ if 'send_clicked' not in st.session_state:
 def clear_input():
     st.session_state.user_input = st.session_state.input_field
     st.session_state.input_field = ""
+    st.session_state.update(send_clicked=True)
 
 def get_recommendations():
     try:
@@ -63,6 +64,8 @@ with st.container():
 
     with col2:
         send_button = st.button("Send", on_click=lambda: st.session_state.update(send_clicked=True))
+
+    new_session_button = st.button("Ask for a different player or team ->", on_click=lambda: st.session_state.clear())
     
     # Handle input logic after send_button is clicked
     if st.session_state.send_clicked and st.session_state.user_input:
