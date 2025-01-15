@@ -1,5 +1,5 @@
 import mechanicalsoup as ms # creates a 'headless browser'
-from utility.vector_db import VectorMetaData, VectorDB
+from vector_db import VectorMetaData, VectorDB
 import os
 import requests
 from datetime import date, datetime
