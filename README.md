@@ -34,7 +34,14 @@ Ein Chatbot, der über Spieler und Teams der NBA gefragt werden kann, um empfehl
 
 # Code
 
-Main Entry-Point [app.py](app.py): ```streamlit run app.py```
+> [!NOTE]
+> Ollama muss installiert sein
+> Spacy muss installiert sein: ```python -m spacy download en_core_web_lg```
+
+Startup-process:
+
+- [frontend](app.py): ```streamlit run app.py```
+- [backend](backend.py): ```python backend.py```
 
 Interaktion mit der App über den localhost.
 
